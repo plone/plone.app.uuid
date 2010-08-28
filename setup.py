@@ -28,6 +28,9 @@ setup(name='plone.app.uuid',
           'plone.indexer',
           'Plone',
       ],
+      extras_require = {
+        'test': ['plone.app.testing',]
+      },
       entry_points="""
       """,
       )

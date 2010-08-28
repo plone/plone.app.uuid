@@ -1,39 +1,30 @@
-from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import PloneSite
-ptc.setupPloneSite()
+import unittest2 as unittest
+from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
+from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 
-class UUIDLayer(PloneSite):
-    @classmethod
-    def setUp(cls):
-        from Products.Five import zcml
-        from Products.Five import fiveconfigure
-        
-        import plone.app.uuid
-        
-        fiveconfigure.debug_mode = True
-        zcml.load_config('configure.zcml', plone.app.uuid)
-        fiveconfigure.debug_mode = False
-    
-    @classmethod
-    def tearDown(cls):
-        pass
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
+from plone.app.testing import setRoles
 
-class IntegrationTestCase(ptc.PloneTestCase):
-    layer = UUIDLayer
-    
-    def afterSetUp(self):
-        self.addProfile('plone.app.uuid:default')
+class IntegrationTestCase(unittest.TestCase):
+    layer = PLONE_APP_UUID_INTEGRATION_TESTING
     
     def test_catalog_setup(self):
-        self.failUnless('uuid' in self.portal['portal_catalog'].schema())
-        self.failUnless('uuid' in self.portal['portal_catalog'].indexes())
+        
+        portal = self.layer['portal']
+        
+        self.failUnless('uuid' in portal['portal_catalog'].schema())
+        self.failUnless('uuid' in portal['portal_catalog'].indexes())
     
     def test_assignment(self):
         from plone.uuid.interfaces import IUUID
         
-        self.folder.invokeFactory('Document', 'd1')
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
         
-        d1 = self.folder['d1']
+        portal.invokeFactory('Document', 'd1')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
         self.assertTrue(isinstance(uuid, str))
@@ -41,13 +32,16 @@ class IntegrationTestCase(ptc.PloneTestCase):
     def test_search(self):
         from plone.uuid.interfaces import IUUID
         
-        self.folder.invokeFactory('Document', 'd1')
-        self.folder.invokeFactory('Document', 'd2')
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
         
-        d1 = self.folder['d1']
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
-        catalog = self.portal['portal_catalog']
+        catalog = portal['portal_catalog']
         results = catalog(uuid=uuid)
         
         self.assertEqual(1, len(results))
@@ -58,10 +52,13 @@ class IntegrationTestCase(ptc.PloneTestCase):
         from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToPhysicalPath
         
-        self.folder.invokeFactory('Document', 'd1')
-        self.folder.invokeFactory('Document', 'd2')
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
         
-        d1 = self.folder['d1']
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
         self.assertEqual('/'.join(d1.getPhysicalPath()), uuidToPhysicalPath(uuid))
@@ -70,10 +67,13 @@ class IntegrationTestCase(ptc.PloneTestCase):
         from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToURL
         
-        self.folder.invokeFactory('Document', 'd1')
-        self.folder.invokeFactory('Document', 'd2')
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
         
-        d1 = self.folder['d1']
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
         self.assertEqual(d1.absolute_url(), uuidToURL(uuid))
@@ -83,34 +83,41 @@ class IntegrationTestCase(ptc.PloneTestCase):
         from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToObject
         
-        self.folder.invokeFactory('Document', 'd1')
-        self.folder.invokeFactory('Document', 'd2')
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
         
-        d1 = self.folder['d1']
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
         self.assertEqual(aq_base(d1), aq_base(uuidToObject(uuid)))
 
-class FunctionalTestCase(ptc.FunctionalTestCase):
-    layer = UUIDLayer
+class FunctionalTestCase(unittest.TestCase):
     
-    def afterSetUp(self):
-        self.addProfile('plone.app.uuid:default')
+    layer = PLONE_APP_UUID_FUNCTIONAL_TESTING
     
     def test_uuid_view(self):
+        
         from plone.uuid.interfaces import IUUID
         
-        self.folder.invokeFactory('Document', 'd1')
+        portal = self.layer['portal']
+        app = self.layer['app']
         
-        d1 = self.folder['d1']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        
+        portal.invokeFactory('Document', 'd1')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
         import transaction
         transaction.commit()
         
-        from Products.Five.testbrowser import Browser
-        browser = Browser()
-        browser.addHeader('Authorization', 'Basic %s:%s' % (ptc.default_user, ptc.default_password,))
+        from plone.testing.z2 import Browser
+        browser = Browser(app)
+        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
         
         browser.open("%s/@@uuid" % d1.absolute_url())
         self.assertEqual(uuid, browser.contents)
@@ -118,18 +125,23 @@ class FunctionalTestCase(ptc.FunctionalTestCase):
     def test_redirect_to_uuid_view(self):
         from plone.uuid.interfaces import IUUID
         
-        self.folder.invokeFactory('Document', 'd1')
-        self.folder.invokeFactory('Document', 'd2')
+        portal = self.layer['portal']
+        app = self.layer['app']
         
-        d1 = self.folder['d1']
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+        
+        d1 = portal['d1']
         uuid = IUUID(d1)
         
         import transaction
         transaction.commit()
         
-        from Products.Five.testbrowser import Browser
-        browser = Browser()
-        browser.addHeader('Authorization', 'Basic %s:%s' % (ptc.default_user, ptc.default_password,))
+        from plone.testing.z2 import Browser
+        browser = Browser(app)
+        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
         
-        browser.open("%s/@@redirect-to-uuid/%s" % (self.portal.absolute_url(), uuid,))
+        browser.open("%s/@@redirect-to-uuid/%s" % (portal.absolute_url(), uuid,))
         self.assertEqual(d1.absolute_url(), browser.url)
