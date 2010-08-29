@@ -22,5 +22,5 @@ class RedirectToUUIDView(BrowserView):
         if self.uuid is None:
             raise KeyError("No UUID given in sub-path. Use .../@@redirect-to-uuid/<uuid>")
         url = uuidToURL(self.uuid)
-        self.request.response.redirect(url, status=301)
+        self.request.response.redirect(url)
         return u''
