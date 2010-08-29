@@ -26,10 +26,11 @@ setup(name='plone.app.uuid',
           'setuptools',
           'plone.uuid',
           'plone.indexer',
-          'Plone',
+          'zope.publisher',
+          'zope.interface',
       ],
       extras_require = {
-        'test': ['plone.app.testing',]
+        'test': ['plone.app.testing', 'Products.Archetypes >= 1.7']
       },
       entry_points="""
       """,

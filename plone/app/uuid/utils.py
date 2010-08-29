@@ -46,7 +46,7 @@ def uuidToCatalogBrain(uuid):
     if catalog is None:
         return None
     
-    result = catalog(uuid=uuid)
+    result = catalog(UID=uuid)
     if len(result) != 1:
         return None
     

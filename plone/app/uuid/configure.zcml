@@ -1,27 +1,13 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone.app.uuid">
     
     <include package="plone.uuid" />
     <include package="plone.indexer" />
     
-    <genericsetup:registerProfile
-        name="default"
-        title="Content UUIDs"
-        directory="profiles/default"
-        description="Installs plone.app.uuid"
-        provides="Products.GenericSetup.interfaces.EXTENSION"
-        />
-    
     <!-- Install indexer -->
-    <adapter factory=".indexer.uuidIndexer" name="uuid" />
-    
-    <!-- Let all CMF types have UUIDs -->
-    <class class="Products.CMFCore.DynamicType.DynamicType">
-        <implements interface="plone.uuid.interfaces.IAttributeUUID" />
-    </class>
+    <adapter factory=".indexer.uuidIndexer" name="UID" />
     
     <!-- Register utility views -->
     <browser:view

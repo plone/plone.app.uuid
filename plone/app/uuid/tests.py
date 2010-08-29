@@ -6,15 +6,13 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing import setRoles
 
+# Note: Most of these tests assume we have Archetypes 1.7, i.e. a version
+# which contains the plone.uuid integration. plone.app.uuid is in fact
+# Archetypes-independent, but it is not very interesting to have integration
+# tests written against something completely fictitous
+
 class IntegrationTestCase(unittest.TestCase):
     layer = PLONE_APP_UUID_INTEGRATION_TESTING
-    
-    def test_catalog_setup(self):
-        
-        portal = self.layer['portal']
-        
-        self.failUnless('uuid' in portal['portal_catalog'].schema())
-        self.failUnless('uuid' in portal['portal_catalog'].indexes())
     
     def test_assignment(self):
         from plone.uuid.interfaces import IUUID
@@ -42,10 +40,10 @@ class IntegrationTestCase(unittest.TestCase):
         uuid = IUUID(d1)
         
         catalog = portal['portal_catalog']
-        results = catalog(uuid=uuid)
+        results = catalog(UID=uuid)
         
         self.assertEqual(1, len(results))
-        self.assertEqual(uuid, results[0].uuid)
+        self.assertEqual(uuid, results[0].UID)
         self.assertEqual('/'.join(d1.getPhysicalPath()), results[0].getPath())
     
     def test_uuidToPhysicalPath(self):
