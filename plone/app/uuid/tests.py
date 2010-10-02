@@ -143,3 +143,27 @@ class FunctionalTestCase(unittest.TestCase):
         
         browser.open("%s/@@redirect-to-uuid/%s" % (portal.absolute_url(), uuid,))
         self.assertEqual(d1.absolute_url(), browser.url)
+
+    def test_redirect_to_uuid_invalid_uuid(self):
+        from mechanize import HTTPError
+        
+        portal = self.layer['portal']
+        app = self.layer['app']
+        
+        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+        
+        import transaction
+        transaction.commit()
+        
+        from plone.testing.z2 import Browser
+        browser = Browser(app)
+        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
+        
+        try:
+            browser.open("%s/@@redirect-to-uuid/gibberish" % (portal.absolute_url(), ))
+            self.fail("No error raised")
+        except HTTPError, e:
+            self.assertEqual(e.code, 404)
