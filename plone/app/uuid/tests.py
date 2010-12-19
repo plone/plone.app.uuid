@@ -2,7 +2,7 @@ import unittest2 as unittest
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 
-from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing import setRoles
 
@@ -18,7 +18,7 @@ class IntegrationTestCase(unittest.TestCase):
         from plone.uuid.interfaces import IUUID
         
         portal = self.layer['portal']
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         
@@ -31,7 +31,7 @@ class IntegrationTestCase(unittest.TestCase):
         from plone.uuid.interfaces import IUUID
         
         portal = self.layer['portal']
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -51,7 +51,7 @@ class IntegrationTestCase(unittest.TestCase):
         from plone.app.uuid.utils import uuidToPhysicalPath
         
         portal = self.layer['portal']
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -66,7 +66,7 @@ class IntegrationTestCase(unittest.TestCase):
         from plone.app.uuid.utils import uuidToURL
         
         portal = self.layer['portal']
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -82,7 +82,7 @@ class IntegrationTestCase(unittest.TestCase):
         from plone.app.uuid.utils import uuidToObject
         
         portal = self.layer['portal']
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -103,7 +103,7 @@ class FunctionalTestCase(unittest.TestCase):
         portal = self.layer['portal']
         app = self.layer['app']
         
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         
@@ -115,7 +115,7 @@ class FunctionalTestCase(unittest.TestCase):
         
         from plone.testing.z2 import Browser
         browser = Browser(app)
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
+        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_ID, TEST_USER_PASSWORD,))
         
         browser.open("%s/@@uuid" % d1.absolute_url())
         self.assertEqual(uuid, browser.contents)
@@ -126,7 +126,7 @@ class FunctionalTestCase(unittest.TestCase):
         portal = self.layer['portal']
         app = self.layer['app']
         
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -139,7 +139,7 @@ class FunctionalTestCase(unittest.TestCase):
         
         from plone.testing.z2 import Browser
         browser = Browser(app)
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
+        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_ID, TEST_USER_PASSWORD,))
         
         browser.open("%s/@@redirect-to-uuid/%s" % (portal.absolute_url(), uuid,))
         self.assertEqual(d1.absolute_url(), browser.url)
@@ -150,7 +150,7 @@ class FunctionalTestCase(unittest.TestCase):
         portal = self.layer['portal']
         app = self.layer['app']
         
-        setRoles(portal, TEST_USER_NAME, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ['Manager'])
         
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -160,7 +160,7 @@ class FunctionalTestCase(unittest.TestCase):
         
         from plone.testing.z2 import Browser
         browser = Browser(app)
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
+        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_ID, TEST_USER_PASSWORD,))
         
         try:
             browser.open("%s/@@redirect-to-uuid/gibberish" % (portal.absolute_url(), ))
