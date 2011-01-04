@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0b2 (2011-01-03)
+------------------
+- Use user id instead of user name to fix tests.
+  [davisagli]
+
 1.0b1 (2010-11-27)
 ------------------
 
