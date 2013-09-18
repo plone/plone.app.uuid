@@ -7,7 +7,7 @@ setup(name='plone.app.uuid',
       version=version,
       description="Plone integration for the basic plone.uuid package",
       long_description=open("README.rst").read() + "\n" +
-                       open(os.path.join("docs", "CHANGES.rst")).read(),
+                       open("CHANGES.rst").read(),
       # Get more strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
