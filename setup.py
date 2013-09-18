@@ -10,9 +10,9 @@ setup(name='plone.app.uuid',
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
-        "Framework :: Plone",
-        "Programming Language :: Python",
-        ],
+          "Framework :: Plone",
+          "Programming Language :: Python",
+      ],
       keywords='plone uuid',
       author='Martin Aspeli',
       author_email='optilude@gmail.com',
@@ -29,8 +29,12 @@ setup(name='plone.app.uuid',
           'zope.publisher',
           'zope.interface',
       ],
-      extras_require = {
-        'test': ['plone.app.testing', 'Products.Archetypes >= 1.7']
+      extras_require={
+          'test': [
+              'plone.dexterity',
+              'plone.app.testing',
+              'Products.Archetypes >= 1.7'
+          ]
       },
       entry_points="""
       """,
