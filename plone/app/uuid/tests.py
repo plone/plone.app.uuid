@@ -1,4 +1,3 @@
-from plone.dexterity.fti import DexterityFTI
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 
@@ -18,9 +17,6 @@ class IntegrationTestCase(unittest.TestCase):
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
-
         portal.invokeFactory('Document', 'd1')
 
         d1 = portal['d1']
@@ -33,9 +29,6 @@ class IntegrationTestCase(unittest.TestCase):
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
-
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
 
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -57,9 +50,6 @@ class IntegrationTestCase(unittest.TestCase):
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
-
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
 
@@ -74,9 +64,6 @@ class IntegrationTestCase(unittest.TestCase):
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
-
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
 
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -93,9 +80,6 @@ class IntegrationTestCase(unittest.TestCase):
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
-
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
 
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
@@ -118,9 +102,6 @@ class FunctionalTestCase(unittest.TestCase):
         app = self.layer['app']
 
         setRoles(portal, TEST_USER_ID, ['Manager'])
-
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
 
         portal.invokeFactory('Document', 'd1')
 
@@ -145,9 +126,6 @@ class FunctionalTestCase(unittest.TestCase):
 
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
-
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
 
@@ -171,9 +149,6 @@ class FunctionalTestCase(unittest.TestCase):
         app = self.layer['app']
 
         setRoles(portal, TEST_USER_ID, ['Manager'])
-
-        fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
 
         portal.invokeFactory('Document', 'd1')
         portal.invokeFactory('Document', 'd2')
