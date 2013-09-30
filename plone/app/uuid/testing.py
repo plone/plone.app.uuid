@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from Products.CMFCore.utils import getToolByName
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import IntegrationTesting
@@ -15,9 +17,10 @@ class PloneAppUUID(PloneSandboxLayer):
         import plone.app.uuid
         xmlconfig.file('configure.zcml', plone.app.uuid, context=configurationContext)
 
-    def setUpPlone(self, portal):
+    def setUpPloneSite(self, portal):
         fti = DexterityFTI('Document')
-        portal.portal_types._setObject('Document', fti)
+        types_tool = getToolByName(portal, "portal_types")
+        types_tool._setObject('Document', fti)
 
 
 PLONE_APP_UUID_FIXTURE = PloneAppUUID()
