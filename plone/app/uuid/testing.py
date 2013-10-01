@@ -18,13 +18,13 @@ class PloneAppUUID(PloneSandboxLayer):
         xmlconfig.file('configure.zcml', plone.app.uuid, context=configurationContext)
 
     def setUpPloneSite(self, portal):
-        fti = DexterityFTI('Document')
         types_tool = getToolByName(portal, "portal_types")
-        types_tool._setObject('Document', fti)
-
-    def tearDownPloneSite(self, portal):
-        types_tool = getToolByName(portal, "portal_types")
-        del types_tool['Document']
+        # This test should work for both Plone 4.3 (with ATContentTypes) and
+        # Plone 5.x (without any types). Therefore we can not make any
+        # assumptions about an existing Document type.
+        if 'Document' not in types_tool.objectIds():
+            fti = DexterityFTI('Document')
+            types_tool._setObject('Document', fti)
 
 
 PLONE_APP_UUID_FIXTURE = PloneAppUUID()
