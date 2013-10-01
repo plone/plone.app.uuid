@@ -22,6 +22,10 @@ class PloneAppUUID(PloneSandboxLayer):
         types_tool = getToolByName(portal, "portal_types")
         types_tool._setObject('Document', fti)
 
+    def tearDownPloneSite(self, portal):
+        types_tool = getToolByName(portal, "portal_types")
+        del types_tool['Document']
+
 
 PLONE_APP_UUID_FIXTURE = PloneAppUUID()
 PLONE_APP_UUID_INTEGRATION_TESTING = \
