@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.1 - Unreleased
-------------------
+1.1 (2014-02-19)
+----------------
 
 - Make the test setup independent from basic content types in the
   PLONE_FIXTURE.
