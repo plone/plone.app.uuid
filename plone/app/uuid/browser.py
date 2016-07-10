@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces import NotFound
@@ -6,12 +6,11 @@ from zope.publisher.browser import BrowserView
 
 from plone.app.uuid.utils import uuidToURL
 
+@implementer(IPublishTraverse)
 class RedirectToUUIDView(BrowserView):
     """A browser view that will cause a redirect to a given UUID,
     given via sub-path traversal.
     """
-
-    implements(IPublishTraverse)
 
     uuid = None
 
