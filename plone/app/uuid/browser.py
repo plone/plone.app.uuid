@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
+from plone.app.uuid.utils import uuidToURL
 from zope.interface import implementer
-
+from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces import NotFound
-from zope.publisher.browser import BrowserView
 
-from plone.app.uuid.utils import uuidToURL
 
 @implementer(IPublishTraverse)
 class RedirectToUUIDView(BrowserView):
@@ -20,7 +20,9 @@ class RedirectToUUIDView(BrowserView):
 
     def __call__(self):
         if self.uuid is None:
-            raise KeyError("No UUID given in sub-path. Use .../@@redirect-to-uuid/<uuid>")
+            raise KeyError(
+                'No UUID given in sub-path. Use .../@@redirect-to-uuid/<uuid>'
+            )
 
         url = uuidToURL(self.uuid)
         if url is None:

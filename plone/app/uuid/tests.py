@@ -1,9 +1,9 @@
-from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
-from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
-
+# -*- coding: utf-8 -*-
+from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import setRoles
+from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
+from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 
 import unittest2 as unittest
 
@@ -56,7 +56,8 @@ class IntegrationTestCase(unittest.TestCase):
         d1 = portal['d1']
         uuid = IUUID(d1)
 
-        self.assertEqual('/'.join(d1.getPhysicalPath()), uuidToPhysicalPath(uuid))
+        self.assertEqual('/'.join(d1.getPhysicalPath()),
+                         uuidToPhysicalPath(uuid))
 
     def test_uuidToURL(self):
         from plone.uuid.interfaces import IUUID
@@ -113,9 +114,12 @@ class FunctionalTestCase(unittest.TestCase):
 
         from plone.testing.z2 import Browser
         browser = Browser(app)
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_ID, TEST_USER_PASSWORD,))
+        browser.addHeader(
+            'Authorization',
+            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD, )
+        )
 
-        browser.open("%s/@@uuid" % d1.absolute_url())
+        browser.open('{0}/@@uuid'.format(d1.absolute_url()))
         self.assertEqual(uuid, browser.contents)
 
     def test_redirect_to_uuid_view(self):
@@ -137,9 +141,13 @@ class FunctionalTestCase(unittest.TestCase):
 
         from plone.testing.z2 import Browser
         browser = Browser(app)
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_ID, TEST_USER_PASSWORD,))
+        browser.addHeader(
+            'Authorization',
+            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD,)
+        )
 
-        browser.open("%s/@@redirect-to-uuid/%s" % (portal.absolute_url(), uuid,))
+        url = '{0}/@@redirect-to-uuid/{1}'
+        browser.open(url.format(portal.absolute_url(), uuid,))
         self.assertEqual(d1.absolute_url(), browser.url)
 
     def test_redirect_to_uuid_invalid_uuid(self):
@@ -158,10 +166,14 @@ class FunctionalTestCase(unittest.TestCase):
 
         from plone.testing.z2 import Browser
         browser = Browser(app)
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_ID, TEST_USER_PASSWORD,))
+        browser.addHeader(
+            'Authorization',
+            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD, )
+        )
 
         try:
-            browser.open("%s/@@redirect-to-uuid/gibberish" % (portal.absolute_url(), ))
-            self.fail("No error raised")
+            url = '{0}/@@redirect-to-uuid/gibberish'
+            browser.open(url.format(portal.absolute_url()))
+            self.fail('No error raised')
         except HTTPError, e:
             self.assertEqual(e.code, 404)

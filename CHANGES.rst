@@ -25,6 +25,8 @@ Fixes:
 - Use zope.interface decorator.
   [gforcada]
 
+- Update code to follow Plone styleguide.
+  [gforcada]
 
 1.1 (2014-02-19)
 ----------------

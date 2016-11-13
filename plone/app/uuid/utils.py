@@ -1,5 +1,7 @@
-from zope.site.hooks import getSite
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from zope.site.hooks import getSite
+
 
 def uuidToPhysicalPath(uuid):
     """Given a UUID, attempt to return the absolute path of the underlying
@@ -12,6 +14,7 @@ def uuidToPhysicalPath(uuid):
 
     return brain.getPath()
 
+
 def uuidToURL(uuid):
     """Given a UUID, attempt to return the absolute URL of the underlying
     object. Will return None if the UUID can't be found.
@@ -23,6 +26,7 @@ def uuidToURL(uuid):
 
     return brain.getURL()
 
+
 def uuidToObject(uuid):
     """Given a UUID, attempt to return a content object. Will return
     None if the UUID can't be found.
@@ -33,6 +37,7 @@ def uuidToObject(uuid):
         return None
 
     return brain.getObject()
+
 
 def uuidToCatalogBrain(uuid):
     """Given a UUID, attempt to return a catalog brain.
