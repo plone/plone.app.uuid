@@ -4,17 +4,10 @@ Changelog
 1.1.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- *add item here*
+- Update code to follow Plone styleguide.
+  [gforcada]
 
 
 1.1.1 (2016-08-10)
@@ -25,8 +18,6 @@ Fixes:
 - Use zope.interface decorator.
   [gforcada]
 
-- Update code to follow Plone styleguide.
-  [gforcada]
 
 1.1 (2014-02-19)
 ----------------
