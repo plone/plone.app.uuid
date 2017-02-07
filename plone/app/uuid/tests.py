@@ -171,6 +171,6 @@ class FunctionalTestCase(unittest.TestCase):
         )
 
         url = '{0}/@@redirect-to-uuid/gibberish'
-        from zExceptions import NotFound
+        from zope.publisher.interfaces import NotFound
         with self.assertRaises(NotFound):
             browser.open(url.format(portal.absolute_url()))
