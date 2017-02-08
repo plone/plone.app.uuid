@@ -151,8 +151,6 @@ class FunctionalTestCase(unittest.TestCase):
         self.assertEqual(d1.absolute_url(), browser.url)
 
     def test_redirect_to_uuid_invalid_uuid(self):
-        from mechanize import HTTPError
-
         portal = self.layer['portal']
         app = self.layer['app']
 
@@ -166,14 +164,13 @@ class FunctionalTestCase(unittest.TestCase):
 
         from plone.testing.z2 import Browser
         browser = Browser(app)
+        browser.handleErrors = False
         browser.addHeader(
             'Authorization',
             'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD, )
         )
 
-        try:
-            url = '{0}/@@redirect-to-uuid/gibberish'
+        url = '{0}/@@redirect-to-uuid/gibberish'
+        from zope.publisher.interfaces import NotFound
+        with self.assertRaises(NotFound):
             browser.open(url.format(portal.absolute_url()))
-            self.fail('No error raised')
-        except HTTPError, e:
-            self.assertEqual(e.code, 404)
