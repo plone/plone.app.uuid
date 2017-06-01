@@ -5,7 +5,7 @@ from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 
-import unittest2 as unittest
+import unittest
 
 
 class IntegrationTestCase(unittest.TestCase):
