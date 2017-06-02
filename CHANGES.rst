@@ -10,12 +10,12 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Remove unittest2 dependency
+  [kakshay21]
 
 Bug fixes:
 
-- Remove unittest2 dependency
-  [kakshay21]
+- *add item here*
 
 
 1.1.3 (2017-02-12)
