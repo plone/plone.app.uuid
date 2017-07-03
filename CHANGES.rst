@@ -4,18 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Remove unittest2 dependency
   [kakshay21]
-
-Bug fixes:
-
-- *add item here*
 
 
 1.1.3 (2017-02-12)
