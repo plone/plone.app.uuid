@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Provide a ++uuid++ traverser
+  [petri]
 
 Bug fixes:
 

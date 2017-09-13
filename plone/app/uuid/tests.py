@@ -90,6 +90,22 @@ class IntegrationTestCase(unittest.TestCase):
 
         self.assertEqual(aq_base(d1), aq_base(uuidToObject(uuid)))
 
+    def test_uuidTraverse(self):
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+
+        d1 = portal['d1']
+        uuid = IUUID(d1)
+
+        traversed = portal.restrictedTraverse("++uuid++%s" % uuid)
+        self.assertEqual(aq_base(d1), aq_base(traversed))
+
 
 class FunctionalTestCase(unittest.TestCase):
 
@@ -174,3 +190,61 @@ class FunctionalTestCase(unittest.TestCase):
         from zope.publisher.interfaces import NotFound
         with self.assertRaises(NotFound):
             browser.open(url.format(portal.absolute_url()))
+
+
+    def test_traverse_by_uuid(self):
+        from plone.uuid.interfaces import IUUID
+
+        portal = self.layer['portal']
+        app = self.layer['app']
+
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+
+        d1 = portal['d1']
+        uuid = IUUID(d1)
+
+        import transaction
+        transaction.commit()
+
+        from plone.testing.z2 import Browser
+        browser = Browser(app)
+        browser.addHeader(
+            'Authorization',
+            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD,)
+        )
+
+        url = '{0}/++uuid++{1}'
+        browser.open(url.format(portal.absolute_url(), uuid,))
+
+
+    def test_traverse_by_uuid_notfound(self):
+        from plone.uuid.interfaces import IUUID
+
+        portal = self.layer['portal']
+        app = self.layer['app']
+
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+
+        d1 = portal['d1']
+        uuid = IUUID(d1)
+
+        import transaction
+        transaction.commit()
+
+        from plone.testing.z2 import Browser
+        browser = Browser(app)
+        browser.addHeader(
+            'Authorization',
+            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD,)
+        )
+
+        url = '{0}/++uuid++{1}'
+        from mechanize import HTTPError
+        with self.assertRaises(HTTPError):
+            browser.open(url.format(portal.absolute_url(), "nonexistent_uuid"))
