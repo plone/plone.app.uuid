@@ -21,6 +21,7 @@ application. In particular, it:
 
   It follows that the `plone.uuid`_ ``IUUID`` adapter and ``@@uuid`` view are
   now the preferred, generalised way to look up a UUID for an object.
+
 * Registers a utility view, ``@@redirect-to-uuid``. You can use this with
   a URL like::
 
@@ -32,6 +33,15 @@ application. In particular, it:
     UUID. In TAL, you can do something like::
 
         <a tal:attributes="href string:${portal_url}/@@redirect-to-uuid/${obj/@@uuid}">Click here</a>
+
+* Registers a custom traverser, ``++uuid++``. You can use this with a URL like::
+
+    http://example.org/++uuid++b2dc6f7a-9d17-11df-8788-58b035f3cfa0
+
+  This will then return the object identified by the given UUID. The traverser
+  intercepts the normal publishing process, but it fixes the request to make it look like
+  traversal was used.
+
 * Provides several utility methods in the ``plone.app.uuid.utils`` module:
 
   ``uuidToPhysicalPath(uuid)``
