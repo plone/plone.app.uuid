@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix test that fails since it raises zExceptions.NotFound instead of zope.publisher.interfaces.NotFound
+  [pbauer]
 
 
 1.2 (2017-07-03)

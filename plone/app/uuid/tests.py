@@ -156,9 +156,6 @@ class FunctionalTestCase(unittest.TestCase):
 
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
-        portal.invokeFactory('Document', 'd1')
-        portal.invokeFactory('Document', 'd2')
-
         import transaction
         transaction.commit()
 
@@ -170,7 +167,7 @@ class FunctionalTestCase(unittest.TestCase):
             'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD, )
         )
 
-        url = '{0}/@@redirect-to-uuid/gibberish'
-        from zope.publisher.interfaces import NotFound
+        url = '{0}/@@redirect-to-uuid/gibberish'.format(portal.absolute_url())
+        from zExceptions import NotFound
         with self.assertRaises(NotFound):
-            browser.open(url.format(portal.absolute_url()))
+            browser.open(url)
