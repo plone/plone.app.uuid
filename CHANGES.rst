@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- Fix test that fails since it raises zExceptions.NotFound instead of zope.publisher.interfaces.NotFound
+- Fix test that fails since it raises zExceptions.NotFound instead of zope.publisher.interfaces.NotFound.
+  (This makes the tests incompatible with Zope 2.13.)
   [pbauer]
 
 
