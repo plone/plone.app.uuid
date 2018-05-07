@@ -44,7 +44,6 @@ setup(
         'test': [
             'plone.dexterity',
             'plone.app.testing',
-            'Products.Archetypes >= 1.7',
         ]
     },
     entry_points="""
