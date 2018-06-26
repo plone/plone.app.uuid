@@ -18,6 +18,9 @@ Bug fixes:
   (This makes the tests incompatible with Zope 2.13.)
   [pbauer]
 
+- Fix deprecation warning on zope.site.hooks import.
+  [pbauer]
+
 
 1.2 (2017-07-03)
 ----------------

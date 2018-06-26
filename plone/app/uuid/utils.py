@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from zope.site.hooks import getSite
+from zope.component.hooks import getSite
 
 
 def uuidToPhysicalPath(uuid):
