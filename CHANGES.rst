@@ -6,17 +6,11 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
 - Fix test that fails since it raises zExceptions.NotFound instead of zope.publisher.interfaces.NotFound.
   (This makes the tests incompatible with Zope 2.13.)
   [pbauer]
+
+Bug fixes:
 
 - Fix deprecation warning on zope.site.hooks import.
   [pbauer]
