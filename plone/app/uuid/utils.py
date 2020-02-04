@@ -51,7 +51,7 @@ def uuidToCatalogBrain(uuid):
     if catalog is None:
         return None
 
-    result = catalog(UID=uuid)
+    result = catalog.unrestrictedSearchResults(UID=uuid)
     if len(result) != 1:
         return None
 
