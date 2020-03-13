@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.1 (2020-03-13)
+------------------
+
+Bug fixes:
+
+
+- Fix use case where UID to object is failing.
+  [rodfersou] (#8)
+- Initialize towncrier.
+  [gforcada] (#2548)
+
 
 2.0.0 (2018-11-02)
 ------------------
