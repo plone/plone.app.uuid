@@ -8,10 +8,6 @@ Changelog
 
 .. towncrier release notes start
 
-Bug fixes:
-
-- Fix use case where UID to object is failing.
-  [rodfersou]
 
 2.0.0 (2018-11-02)
 ------------------
