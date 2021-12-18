@@ -5,6 +5,7 @@ from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 
+import time
 import unittest
 
 
@@ -58,6 +59,51 @@ class IntegrationTestCase(unittest.TestCase):
 
         self.assertEqual('/'.join(d1.getPhysicalPath()),
                          uuidToPhysicalPath(uuid))
+
+    def test_speed(self):
+        # I updated some of the utility functions to be a bit faster.
+        # In this function you can check the speed.
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToPhysicalPath
+        from plone.app.uuid.utils import uuidToURL
+        from plone.app.uuid.utils import uuidToObject
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        start = time.time()
+        uuids = {}
+        total = 40
+        for i in range(total):
+            doc_id = portal.invokeFactory('Document', 'd{}'.format(i))
+            doc = portal[doc_id]
+            uuids[IUUID(doc)] = {
+                'path': '/'.join(doc.getPhysicalPath()),
+                'url': doc.absolute_url(),
+                'obj': aq_base(doc),
+            }
+        end = time.time()
+        print("Time taken to create {} items: {}".format(total, end - start))
+
+        self.assertEqual(len(uuids), total)
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['path'], uuidToPhysicalPath(uuid))
+        end = time.time()
+        print("Time taken for uuidToPhysicalPath: {}".format(end - start))
+
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['url'], uuidToURL(uuid))
+        end = time.time()
+        print("Time taken for uuidToURL: {}".format(end - start))
+
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['obj'], aq_base(uuidToObject(uuid)))
+        end = time.time()
+        print("Time taken for uuidToObject: {}".format(end - start))
 
     def test_uuidToURL(self):
         from plone.uuid.interfaces import IUUID
