@@ -19,9 +19,8 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Plone',
-        'Framework :: Plone :: 5.0',
-        'Framework :: Plone :: 5.1',
         'Framework :: Plone :: 5.2',
+        'Framework :: Plone :: 6.0',
         'Framework :: Plone :: Core',
         "License :: OSI Approved :: GNU General Public License (GPL)",
         'Programming Language :: Python',
@@ -29,6 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     keywords='plone uuid',
     author='Martin Aspeli',
