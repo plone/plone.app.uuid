@@ -18,9 +18,12 @@ def _catalog():
     except AttributeError:
         site = getSite()
         if site is None:
-            request._catalog = None
+            if request is not None:
+                request._catalog = None
             return
-        catalog = request._catalog = getToolByName(site, 'portal_catalog', None)
+        catalog = getToolByName(site, 'portal_catalog', None)
+        if request is not None:
+            request._catalog = catalog
         return catalog
 
 
