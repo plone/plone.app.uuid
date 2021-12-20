@@ -21,15 +21,18 @@ def uuidToPhysicalPath(uuid):
     if catalog is None:
         return None
     index = catalog.Indexes["UID"]
-    # This works even faster, but uses a private attribute:
-    # rid = index._index.get(uuid)
-    # if not rid:
-    #     return
-    query = IndexQuery({"UID": uuid}, "UID")
-    result = index.query_index(query)
-    if not result:
+    try:
+        # This uses a private attribute, so be careful.
+        rid = index._index.get(uuid)
+    except AttributeError:
+        # Fall back to IndexQuery.
+        query = IndexQuery({"UID": uuid}, "UID")
+        result = index.query_index(query)
+        if not result:
+            return
+        rid = result[0]
+    if not rid:
         return
-    rid = result[0]
     path = catalog.getpath(rid)
     return path
 
