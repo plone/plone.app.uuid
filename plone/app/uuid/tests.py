@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_PASSWORD
@@ -135,6 +136,33 @@ class IntegrationTestCase(unittest.TestCase):
         uuid = IUUID(d1)
 
         self.assertEqual(aq_base(d1), aq_base(uuidToObject(uuid)))
+
+    def test_uuidToObject_private_published(self):
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToObject
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        wftool = portal.portal_workflow
+        wftool.setDefaultChain("simple_publication_workflow")
+
+        portal.invokeFactory('Folder', 'private')
+        private = portal.private
+        private.invokeFactory('Document', 'published')
+        wftool.doActionFor(portal.private.published, 'publish')
+        published = private.published
+        self.assertEqual(wftool.getInfoFor(private, 'review_state'), 'private')
+        self.assertEqual(wftool.getInfoFor(published, 'review_state'), 'published')
+
+        # The test user, which is a Manager, can see both.
+        self.assertEqual(aq_base(published), aq_base(uuidToObject(IUUID(published))))
+        self.assertEqual(aq_base(private), aq_base(uuidToObject(IUUID(private))))
+
+        # Anonymous not.
+        logout()
+        self.assertIsNone(aq_base(uuidToObject(IUUID(private))))
+        self.assertEqual(aq_base(published), aq_base(uuidToObject(IUUID(published))))
 
 
 class FunctionalTestCase(unittest.TestCase):

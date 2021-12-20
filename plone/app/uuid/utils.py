@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.ZCatalog.query import IndexQuery
 from zope.component.hooks import getSite
@@ -52,7 +53,16 @@ def uuidToObject(uuid):
     site = getSite()
     if site is None:
         return
-    return site.restrictedTraverse(path)
+    # Go to the parent of the item without restrictions.
+    split_path = path.split("/")
+    parent_path = split_path[:-1]
+    parent = site.unrestrictedTraverse(parent_path)
+    # Do check restrictions for the final object.
+    final_path = split_path[-1]
+    try:
+        return parent.restrictedTraverse(final_path)
+    except Unauthorized:
+        return
 
 
 def uuidToCatalogBrain(uuid):
