@@ -10,6 +10,9 @@ def uuidToPhysicalPath(uuid):
     object. Will return None if the UUID can't be found.
 
     This version is four times faster than the original.
+    Downside: it no longer automatically checks if the user is allowed
+    to see the object at the path.  This is now the responsibility
+    of the caller.  See the updated code in uuidToObject.
     """
     site = getSite()
     if site is None:
