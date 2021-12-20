@@ -3,6 +3,25 @@ from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.ZCatalog.query import IndexQuery
 from zope.component.hooks import getSite
+from zope.globalrequest import getRequest
+
+
+def _catalog():
+    """Get and store portal_catalog on request.
+
+    This avoids looking up the site and the portal_catalog
+    each time one of the below functions is called.
+    """
+    request = getRequest()
+    try:
+        return request._catalog
+    except AttributeError:
+        site = getSite()
+        if site is None:
+            request._catalog = None
+            return
+        catalog = request._catalog = getToolByName(site, 'portal_catalog', None)
+        return catalog
 
 
 def uuidToPhysicalPath(uuid):
@@ -14,12 +33,9 @@ def uuidToPhysicalPath(uuid):
     to see the object at the path.  This is now the responsibility
     of the caller.  See the updated code in uuidToObject.
     """
-    site = getSite()
-    if site is None:
-        return None
-    catalog = getToolByName(site, 'portal_catalog', None)
+    catalog = _catalog()
     if catalog is None:
-        return None
+        return
     index = catalog.Indexes["UID"]
     try:
         # This uses a private attribute, so be careful.
@@ -74,15 +90,9 @@ def uuidToObject(uuid):
 def uuidToCatalogBrain(uuid):
     """Given a UUID, attempt to return a catalog brain.
     """
-
-    site = getSite()
-    if site is None:
-        return None
-
-    catalog = getToolByName(site, 'portal_catalog', None)
+    catalog = _catalog()
     if catalog is None:
-        return None
-
+        return
     result = catalog.unrestrictedSearchResults(UID=uuid)
     if len(result) != 1:
         return None
