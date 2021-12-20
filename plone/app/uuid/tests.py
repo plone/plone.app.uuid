@@ -69,6 +69,7 @@ class IntegrationTestCase(unittest.TestCase):
         from plone.app.uuid.utils import uuidToPhysicalPath
         from plone.app.uuid.utils import uuidToURL
         from plone.app.uuid.utils import uuidToObject
+        from plone.app.uuid.utils import uuidToCatalogBrain
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -105,6 +106,12 @@ class IntegrationTestCase(unittest.TestCase):
             self.assertEqual(info['obj'], aq_base(uuidToObject(uuid)))
         end = time.time()
         print("Time taken for uuidToObject: {}".format(end - start))
+
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['path'], uuidToCatalogBrain(uuid).getPath())
+        end = time.time()
+        print("Time taken for uuidToCatalogBrain: {}".format(end - start))
 
     def test_uuidToURL(self):
         from plone.uuid.interfaces import IUUID
