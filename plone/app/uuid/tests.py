@@ -6,6 +6,7 @@ from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 
+import os
 import time
 import unittest
 
@@ -76,7 +77,17 @@ class IntegrationTestCase(unittest.TestCase):
 
         start = time.time()
         uuids = {}
-        total = 40
+
+        # Read env variable to see how many items to create.
+        # If we have a variable, do some printing.
+        total = os.getenv("PLONE_APP_UUID_TEST_SPEED_TOTAL")
+        if total:
+            report = True
+            total = int(total)
+            print("Creating {} documents...".format(total))
+        else:
+            report = False
+            total = 40
         for i in range(total):
             doc_id = portal.invokeFactory('Document', 'd{}'.format(i))
             doc = portal[doc_id]
@@ -86,32 +97,37 @@ class IntegrationTestCase(unittest.TestCase):
                 'obj': aq_base(doc),
             }
         end = time.time()
-        print("Time taken to create {} items: {}".format(total, end - start))
+        if report:
+            print("Time taken to create {} items: {}".format(total, end - start))
 
         self.assertEqual(len(uuids), total)
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['path'], uuidToPhysicalPath(uuid))
         end = time.time()
-        print("Time taken for uuidToPhysicalPath: {}".format(end - start))
+        if report:
+            print("Time taken for uuidToPhysicalPath: {}".format(end - start))
 
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['url'], uuidToURL(uuid))
         end = time.time()
-        print("Time taken for uuidToURL: {}".format(end - start))
+        if report:
+            print("Time taken for uuidToURL: {}".format(end - start))
 
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['obj'], aq_base(uuidToObject(uuid)))
         end = time.time()
-        print("Time taken for uuidToObject: {}".format(end - start))
+        if report:
+            print("Time taken for uuidToObject: {}".format(end - start))
 
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['path'], uuidToCatalogBrain(uuid).getPath())
         end = time.time()
-        print("Time taken for uuidToCatalogBrain: {}".format(end - start))
+        if report:
+            print("Time taken for uuidToCatalogBrain: {}".format(end - start))
 
     def test_uuidToURL(self):
         from plone.uuid.interfaces import IUUID
