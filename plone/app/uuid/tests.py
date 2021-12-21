@@ -3,11 +3,13 @@ from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.testing.zope import Browser
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 
 import os
 import time
+import transaction
 import unittest
 
 
@@ -226,10 +228,8 @@ class FunctionalTestCase(unittest.TestCase):
         d1 = portal['d1']
         uuid = IUUID(d1)
 
-        import transaction
         transaction.commit()
 
-        from plone.testing.z2 import Browser
         browser = Browser(app)
         browser.addHeader(
             'Authorization',
@@ -253,10 +253,8 @@ class FunctionalTestCase(unittest.TestCase):
         d1 = portal['d1']
         uuid = IUUID(d1)
 
-        import transaction
         transaction.commit()
 
-        from plone.testing.z2 import Browser
         browser = Browser(app)
         browser.addHeader(
             'Authorization',
@@ -273,10 +271,8 @@ class FunctionalTestCase(unittest.TestCase):
 
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
-        import transaction
         transaction.commit()
 
-        from plone.testing.z2 import Browser
         browser = Browser(app)
         browser.handleErrors = False
         browser.addHeader(
