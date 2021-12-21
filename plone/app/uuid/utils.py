@@ -79,11 +79,9 @@ def uuidToObject(uuid):
     if site is None:
         return
     # Go to the parent of the item without restrictions.
-    split_path = path.split("/")
-    parent_path = split_path[:-1]
+    parent_path, final_path = path.rpartition("/")[::2]
     parent = site.unrestrictedTraverse(parent_path)
     # Do check restrictions for the final object.
-    final_path = split_path[-1]
     try:
         return parent.restrictedTraverse(final_path)
     except Unauthorized:
