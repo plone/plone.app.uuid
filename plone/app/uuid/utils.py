@@ -84,7 +84,11 @@ def uuidToObject(uuid):
     site = getSite()
     if site is None:
         return
-    return site.unrestrictedTraverse(path)
+    # Go to the parent of the item without restrictions.
+    parent_path, final_path = path.rpartition("/")[::2]
+    parent = site.unrestrictedTraverse(parent_path)
+    # Do check restrictions for the final object.
+    return parent.restrictedTraverse(final_path)
 
 
 def uuidToCatalogBrain(uuid):

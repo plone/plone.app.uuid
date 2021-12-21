@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from AccessControl import Unauthorized
 from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -245,12 +246,18 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertEqual(published_path, uuidToCatalogBrain(published_uuid).getPath())
         self.assertEqual(aq_base(published), aq_base(uuidToObject(published_uuid)))
 
-        # Currently, anonymous can also see the private item.
+        # Currently, anonymous can also see the private item with most functions.
         # See the docstring of this test method.
+        # But: when you get a brain with unrestrictedSearchResults,
+        # the getObject may fail.
         self.assertEqual(private_path, uuidToPhysicalPath(private_uuid))
         self.assertEqual(private_url, uuidToURL(private_uuid))
-        self.assertEqual(private_path, uuidToCatalogBrain(private_uuid).getPath())
-        self.assertEqual(aq_base(private), aq_base(uuidToObject(private_uuid)))
+        brain = uuidToCatalogBrain(private_uuid)
+        self.assertEqual(private_path, brain.getPath())
+        with self.assertRaises(Unauthorized):
+            brain.getObject()
+        with self.assertRaises(Unauthorized):
+            uuidToObject(private_uuid)
 
 
 class FunctionalTestCase(unittest.TestCase):
