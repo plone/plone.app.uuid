@@ -1,4 +1,5 @@
 Speed up ``uuidToPhysicalPath`` and ``uuidToObject``.
 Do this by using an IndexQuery to only query the UID index.
-``uuidToPhysicalPath`` no longer checks security, ``uuidToObject`` still does.
+Note: none of the functions check security.
+It is up to the caller to do this, if needed.
 [maurits]

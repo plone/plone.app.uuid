@@ -183,6 +183,18 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertIsNone(uuidToCatalogBrain('unknown'))
 
     def test_access_private_published(self):
+        """Do the functions return both private and published items?
+
+        It might be logical to only return an object if the user is authorized
+        to view it.  But this is not good for all use cases.
+        For example, plone.app.linkintegrity needs to be able to check *all*
+        links and create relations for them, even when the current Editor
+        does not have permission to view all of them.
+
+        So for now, all functions return information without checking
+        permissions.  In the future, we could add an extra keyword argument:
+        'restricted/unrestricted=True/False'.
+        """
         from Acquisition import aq_base
         from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToPhysicalPath
@@ -233,11 +245,12 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertEqual(published_path, uuidToCatalogBrain(published_uuid).getPath())
         self.assertEqual(aq_base(published), aq_base(uuidToObject(published_uuid)))
 
-        # Anonymous cannot see the private item, except for the physical path.
+        # Currently, anonymous can also see the private item.
+        # See the docstring of this test method.
         self.assertEqual(private_path, uuidToPhysicalPath(private_uuid))
-        self.assertIsNone(uuidToURL(private_uuid))
-        self.assertIsNone(uuidToCatalogBrain(private_uuid))
-        self.assertIsNone(uuidToObject(private_uuid))
+        self.assertEqual(private_url, uuidToURL(private_uuid))
+        self.assertEqual(private_path, uuidToCatalogBrain(private_uuid).getPath())
+        self.assertEqual(aq_base(private), aq_base(uuidToObject(private_uuid)))
 
 
 class FunctionalTestCase(unittest.TestCase):

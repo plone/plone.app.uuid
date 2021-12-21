@@ -32,9 +32,9 @@ def uuidToPhysicalPath(uuid):
     object. Will return None if the UUID can't be found.
 
     This version is four times faster than the original.
-    Downside: it no longer automatically checks if the user is allowed
-    to see the object at the path.  This is now the responsibility
-    of the caller.  See the updated code in uuidToObject.
+
+    Note: the user may not be authorized to view the object at this path.
+    It is up to the caller to check this, if needed.
     """
     catalog = _catalog()
     if catalog is None:
@@ -59,6 +59,9 @@ def uuidToPhysicalPath(uuid):
 def uuidToURL(uuid):
     """Given a UUID, attempt to return the absolute URL of the underlying
     object. Will return None if the UUID can't be found.
+
+    Note: the user may not be authorized to view the object at the url.
+    It is up to the caller to check this, if needed.
     """
 
     brain = uuidToCatalogBrain(uuid)
@@ -71,6 +74,9 @@ def uuidToURL(uuid):
 def uuidToObject(uuid):
     """Given a UUID, attempt to return a content object. Will return
     None if the UUID can't be found.
+
+    Note: the user may not be authorized to view the object.
+    It is up to the caller to check this, if needed.
     """
     path = uuidToPhysicalPath(uuid)
     if not path:
@@ -78,24 +84,19 @@ def uuidToObject(uuid):
     site = getSite()
     if site is None:
         return
-    # Go to the parent of the item without restrictions.
-    parent_path, final_path = path.rpartition("/")[::2]
-    parent = site.unrestrictedTraverse(parent_path)
-    # Do check restrictions for the final object.
-    try:
-        return parent.restrictedTraverse(final_path)
-    except Unauthorized:
-        return
+    return site.unrestrictedTraverse(path)
 
 
 def uuidToCatalogBrain(uuid):
     """Given a UUID, attempt to return a catalog brain.
+
+    Note: the user may not be authorized to view the object for this brain.
+    It is up to the caller to check this, if needed.
     """
     catalog = _catalog()
     if catalog is None:
         return
-    # Note: until plone.app.uuid 2.x, we called unrestrictedSearchResults here.
-    result = catalog.searchResults(UID=uuid)
+    result = catalog.unrestrictedSearchResults(UID=uuid)
     if len(result) != 1:
         return None
 
