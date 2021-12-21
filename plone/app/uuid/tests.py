@@ -163,6 +163,23 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertEqual(aq_base(d1), aq_base(uuidToObject(uuid)))
         self.assertIsNone(uuidToObject('unknown'))
 
+    def test_uuidToCatalogBrain(self):
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToCatalogBrain
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+
+        d1 = portal['d1']
+        uuid = IUUID(d1)
+
+        self.assertEqual('/'.join(d1.getPhysicalPath()), uuidToCatalogBrain(uuid).getPath())
+        self.assertIsNone(uuidToCatalogBrain('unknown'))
+
     def test_uuidToObject_private_published(self):
         from Acquisition import aq_base
         from plone.uuid.interfaces import IUUID
