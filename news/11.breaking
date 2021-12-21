@@ -1,0 +1,5 @@
+``uuidToObject``, ``uuidToURL`` and ``uuidToCatalogBrain`` return None when you are not authorized.
+Previously you would get an Unauthorized error when calling these functions or trying to use the result.
+``uuidToPhysicalPath`` is the only function that does not check security:
+you get the path, whether you can see the object at that path or not.
+[maurits]

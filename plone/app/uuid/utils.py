@@ -94,7 +94,8 @@ def uuidToCatalogBrain(uuid):
     catalog = _catalog()
     if catalog is None:
         return
-    result = catalog.unrestrictedSearchResults(UID=uuid)
+    # Note: until plone.app.uuid 2.x, we called unrestrictedSearchResults here.
+    result = catalog.searchResults(UID=uuid)
     if len(result) != 1:
         return None
 

@@ -182,32 +182,62 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertEqual('/'.join(d1.getPhysicalPath()), uuidToCatalogBrain(uuid).getPath())
         self.assertIsNone(uuidToCatalogBrain('unknown'))
 
-    def test_uuidToObject_private_published(self):
+    def test_access_private_published(self):
         from Acquisition import aq_base
         from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToPhysicalPath
+        from plone.app.uuid.utils import uuidToURL
         from plone.app.uuid.utils import uuidToObject
+        from plone.app.uuid.utils import uuidToCatalogBrain
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
         wftool = portal.portal_workflow
         wftool.setDefaultChain("simple_publication_workflow")
 
+        # Create private folder.
         portal.invokeFactory('Folder', 'private')
         private = portal.private
+        private_url = private.absolute_url()
+        private_uuid = IUUID(private)
+        private_path = '/'.join(private.getPhysicalPath())
+
+        # Create public document in private folder.
         private.invokeFactory('Document', 'published')
         wftool.doActionFor(portal.private.published, 'publish')
         published = private.published
+        published_url = published.absolute_url()
+        published_uuid = IUUID(published)
+        published_path = '/'.join(published.getPhysicalPath())
+
+        # Check that the review states are what we expect.
         self.assertEqual(wftool.getInfoFor(private, 'review_state'), 'private')
         self.assertEqual(wftool.getInfoFor(published, 'review_state'), 'published')
 
-        # The test user, which is a Manager, can see both.
-        self.assertEqual(aq_base(published), aq_base(uuidToObject(IUUID(published))))
-        self.assertEqual(aq_base(private), aq_base(uuidToObject(IUUID(private))))
+        # The test user can obviously see the published item.
+        self.assertEqual(published_path, uuidToPhysicalPath(published_uuid))
+        self.assertEqual(published_url, uuidToURL(published_uuid))
+        self.assertEqual(published_path, uuidToCatalogBrain(published_uuid).getPath())
+        self.assertEqual(aq_base(published), aq_base(uuidToObject(published_uuid)))
 
-        # Anonymous not.
+        # The test user, which here has a Manager role, can see the private item.
+        self.assertEqual(private_path, uuidToPhysicalPath(private_uuid))
+        self.assertEqual(private_url, uuidToURL(private_uuid))
+        self.assertEqual(private_path, uuidToCatalogBrain(private_uuid).getPath())
+        self.assertEqual(aq_base(private), aq_base(uuidToObject(private_uuid)))
+
+        # Anonymous can see the published item.
         logout()
-        self.assertIsNone(aq_base(uuidToObject(IUUID(private))))
-        self.assertEqual(aq_base(published), aq_base(uuidToObject(IUUID(published))))
+        self.assertEqual(published_path, uuidToPhysicalPath(published_uuid))
+        self.assertEqual(published_url, uuidToURL(published_uuid))
+        self.assertEqual(published_path, uuidToCatalogBrain(published_uuid).getPath())
+        self.assertEqual(aq_base(published), aq_base(uuidToObject(published_uuid)))
+
+        # Anonymous cannot see the private item, except for the physical path.
+        self.assertEqual(private_path, uuidToPhysicalPath(private_uuid))
+        self.assertIsNone(uuidToURL(private_uuid))
+        self.assertIsNone(uuidToCatalogBrain(private_uuid))
+        self.assertIsNone(uuidToObject(private_uuid))
 
 
 class FunctionalTestCase(unittest.TestCase):
