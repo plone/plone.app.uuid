@@ -61,6 +61,7 @@ class IntegrationTestCase(unittest.TestCase):
 
         self.assertEqual('/'.join(d1.getPhysicalPath()),
                          uuidToPhysicalPath(uuid))
+        self.assertIsNone(uuidToPhysicalPath('unknown'))
 
     def test_speed(self):
         # I updated some of the utility functions to be a bit faster.
@@ -143,6 +144,7 @@ class IntegrationTestCase(unittest.TestCase):
         uuid = IUUID(d1)
 
         self.assertEqual(d1.absolute_url(), uuidToURL(uuid))
+        self.assertIsNone(uuidToURL('unknown'))
 
     def test_uuidToObject(self):
         from Acquisition import aq_base
@@ -159,6 +161,7 @@ class IntegrationTestCase(unittest.TestCase):
         uuid = IUUID(d1)
 
         self.assertEqual(aq_base(d1), aq_base(uuidToObject(uuid)))
+        self.assertIsNone(uuidToObject('unknown'))
 
     def test_uuidToObject_private_published(self):
         from Acquisition import aq_base
