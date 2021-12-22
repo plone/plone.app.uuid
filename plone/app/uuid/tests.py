@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
+from AccessControl import Unauthorized
+from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.testing.zope import Browser
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
 
+import os
+import time
+import transaction
 import unittest
 
 
@@ -58,6 +64,74 @@ class IntegrationTestCase(unittest.TestCase):
 
         self.assertEqual('/'.join(d1.getPhysicalPath()),
                          uuidToPhysicalPath(uuid))
+        self.assertIsNone(uuidToPhysicalPath('unknown'))
+
+    def test_speed(self):
+        # I updated some of the utility functions to be a bit faster.
+        # In this function you can check the speed.
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToPhysicalPath
+        from plone.app.uuid.utils import uuidToURL
+        from plone.app.uuid.utils import uuidToObject
+        from plone.app.uuid.utils import uuidToCatalogBrain
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        start = time.time()
+        uuids = {}
+
+        # Read env variable to see how many items to create.
+        # If we have a variable, do some printing.
+        total = os.getenv("PLONE_APP_UUID_TEST_SPEED_TOTAL")
+        if total:
+            report = True
+            total = int(total)
+            print("Creating {} documents...".format(total))
+        else:
+            report = False
+            total = 40
+        for i in range(total):
+            doc_id = portal.invokeFactory('Document', 'd{}'.format(i))
+            doc = portal[doc_id]
+            uuids[IUUID(doc)] = {
+                'path': '/'.join(doc.getPhysicalPath()),
+                'url': doc.absolute_url(),
+                'obj': aq_base(doc),
+            }
+        end = time.time()
+        if report:
+            print("Time taken to create {} items: {}".format(total, end - start))
+
+        self.assertEqual(len(uuids), total)
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['path'], uuidToPhysicalPath(uuid))
+        end = time.time()
+        if report:
+            print("Time taken for uuidToPhysicalPath: {}".format(end - start))
+
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['url'], uuidToURL(uuid))
+        end = time.time()
+        if report:
+            print("Time taken for uuidToURL: {}".format(end - start))
+
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['obj'], aq_base(uuidToObject(uuid)))
+        end = time.time()
+        if report:
+            print("Time taken for uuidToObject: {}".format(end - start))
+
+        start = time.time()
+        for uuid, info in uuids.items():
+            self.assertEqual(info['path'], uuidToCatalogBrain(uuid).getPath())
+        end = time.time()
+        if report:
+            print("Time taken for uuidToCatalogBrain: {}".format(end - start))
 
     def test_uuidToURL(self):
         from plone.uuid.interfaces import IUUID
@@ -73,6 +147,7 @@ class IntegrationTestCase(unittest.TestCase):
         uuid = IUUID(d1)
 
         self.assertEqual(d1.absolute_url(), uuidToURL(uuid))
+        self.assertIsNone(uuidToURL('unknown'))
 
     def test_uuidToObject(self):
         from Acquisition import aq_base
@@ -89,6 +164,100 @@ class IntegrationTestCase(unittest.TestCase):
         uuid = IUUID(d1)
 
         self.assertEqual(aq_base(d1), aq_base(uuidToObject(uuid)))
+        self.assertIsNone(uuidToObject('unknown'))
+
+    def test_uuidToCatalogBrain(self):
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToCatalogBrain
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        portal.invokeFactory('Document', 'd1')
+        portal.invokeFactory('Document', 'd2')
+
+        d1 = portal['d1']
+        uuid = IUUID(d1)
+
+        self.assertEqual('/'.join(d1.getPhysicalPath()), uuidToCatalogBrain(uuid).getPath())
+        self.assertIsNone(uuidToCatalogBrain('unknown'))
+
+    def test_access_private_published(self):
+        """Do the functions return both private and published items?
+
+        It might be logical to only return an object if the user is authorized
+        to view it.  But this is not good for all use cases.
+        For example, plone.app.linkintegrity needs to be able to check *all*
+        links and create relations for them, even when the current Editor
+        does not have permission to view all of them.
+
+        So for now, all functions return information without checking
+        permissions.  In the future, we could add an extra keyword argument:
+        'restricted/unrestricted=True/False'.
+        """
+        from Acquisition import aq_base
+        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToPhysicalPath
+        from plone.app.uuid.utils import uuidToURL
+        from plone.app.uuid.utils import uuidToObject
+        from plone.app.uuid.utils import uuidToCatalogBrain
+
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        wftool = portal.portal_workflow
+        wftool.setDefaultChain("simple_publication_workflow")
+
+        # Create private folder.
+        portal.invokeFactory('Folder', 'private')
+        private = portal.private
+        private_url = private.absolute_url()
+        private_uuid = IUUID(private)
+        private_path = '/'.join(private.getPhysicalPath())
+
+        # Create public document in private folder.
+        private.invokeFactory('Document', 'published')
+        wftool.doActionFor(portal.private.published, 'publish')
+        published = private.published
+        published_url = published.absolute_url()
+        published_uuid = IUUID(published)
+        published_path = '/'.join(published.getPhysicalPath())
+
+        # Check that the review states are what we expect.
+        self.assertEqual(wftool.getInfoFor(private, 'review_state'), 'private')
+        self.assertEqual(wftool.getInfoFor(published, 'review_state'), 'published')
+
+        # The test user can obviously see the published item.
+        self.assertEqual(published_path, uuidToPhysicalPath(published_uuid))
+        self.assertEqual(published_url, uuidToURL(published_uuid))
+        self.assertEqual(published_path, uuidToCatalogBrain(published_uuid).getPath())
+        self.assertEqual(aq_base(published), aq_base(uuidToObject(published_uuid)))
+
+        # The test user, which here has a Manager role, can see the private item.
+        self.assertEqual(private_path, uuidToPhysicalPath(private_uuid))
+        self.assertEqual(private_url, uuidToURL(private_uuid))
+        self.assertEqual(private_path, uuidToCatalogBrain(private_uuid).getPath())
+        self.assertEqual(aq_base(private), aq_base(uuidToObject(private_uuid)))
+
+        # Anonymous can see the published item.
+        logout()
+        self.assertEqual(published_path, uuidToPhysicalPath(published_uuid))
+        self.assertEqual(published_url, uuidToURL(published_uuid))
+        self.assertEqual(published_path, uuidToCatalogBrain(published_uuid).getPath())
+        self.assertEqual(aq_base(published), aq_base(uuidToObject(published_uuid)))
+
+        # Currently, anonymous can also see the private item with most functions.
+        # See the docstring of this test method.
+        # But: when you get a brain with unrestrictedSearchResults,
+        # the getObject may fail.
+        self.assertEqual(private_path, uuidToPhysicalPath(private_uuid))
+        self.assertEqual(private_url, uuidToURL(private_uuid))
+        brain = uuidToCatalogBrain(private_uuid)
+        self.assertEqual(private_path, brain.getPath())
+        with self.assertRaises(Unauthorized):
+            brain.getObject()
+        with self.assertRaises(Unauthorized):
+            uuidToObject(private_uuid)
 
 
 class FunctionalTestCase(unittest.TestCase):
@@ -109,10 +278,8 @@ class FunctionalTestCase(unittest.TestCase):
         d1 = portal['d1']
         uuid = IUUID(d1)
 
-        import transaction
         transaction.commit()
 
-        from plone.testing.z2 import Browser
         browser = Browser(app)
         browser.addHeader(
             'Authorization',
@@ -136,10 +303,8 @@ class FunctionalTestCase(unittest.TestCase):
         d1 = portal['d1']
         uuid = IUUID(d1)
 
-        import transaction
         transaction.commit()
 
-        from plone.testing.z2 import Browser
         browser = Browser(app)
         browser.addHeader(
             'Authorization',
@@ -156,10 +321,8 @@ class FunctionalTestCase(unittest.TestCase):
 
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
-        import transaction
         transaction.commit()
 
-        from plone.testing.z2 import Browser
         browser = Browser(app)
         browser.handleErrors = False
         browser.addHeader(
