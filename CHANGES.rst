@@ -8,6 +8,20 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.0 (2021-12-29)
+------------------
+
+New features:
+
+
+- Speed up ``uuidToPhysicalPath`` and ``uuidToObject``.
+  Do this by using an IndexQuery to only query the UID index.
+  Note: of the four functions in ``utils.py``, only ``uuidToObject`` checks the security.
+  For the other functions, it is up to the caller to do this, if needed.
+  We may change this in the future, but for now the behavior should be the same as in previous versions.
+  [maurits] (#11)
+
+
 2.0.2 (2020-04-20)
 ------------------
 
