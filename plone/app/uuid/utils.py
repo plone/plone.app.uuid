@@ -71,12 +71,14 @@ def uuidToURL(uuid):
     return brain.getURL()
 
 
-def uuidToObject(uuid):
+def uuidToObject(uuid, unrestricted = False):
     """Given a UUID, attempt to return a content object. Will return
     None if the UUID can't be found.
 
     Note: the user may not be authorized to view the object.
     It is up to the caller to check this, if needed.
+
+    If the author is authorised to view the object, unrestricted flag should be set to True
     """
     path = uuidToPhysicalPath(uuid)
     if not path:
@@ -88,6 +90,9 @@ def uuidToObject(uuid):
     parent_path, final_path = path.rpartition("/")[::2]
     parent = site.unrestrictedTraverse(parent_path)
     # Do check restrictions for the final object.
+    # Check if the object has restrictions
+    if unrestricted:
+        return parent.unrestrictedTraverse(final_path)
     return parent.restrictedTraverse(final_path)
 
 
