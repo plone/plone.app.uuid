@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.0 (2022-08-30)
+------------------
+
+Bug fixes:
+
+
+- Add optional security check for uuidToObject [anirudhhkashyap] (#13)
+
+
 2.1.0 (2021-12-29)
 ------------------
 
