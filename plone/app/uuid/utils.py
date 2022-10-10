@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
+from Products.CMFCore.indexing import processQueue
 from Products.CMFCore.utils import getToolByName
 from Products.ZCatalog.query import IndexQuery
 from zope.component.hooks import getSite
@@ -40,6 +41,9 @@ def uuidToPhysicalPath(uuid):
     if catalog is None:
         return
     index = catalog.Indexes["UID"]
+
+    # Process the catalog queue in case we have pending relevant operations
+    processQueue()
     try:
         # This uses a private attribute, so be careful.
         rid = index._index.get(uuid)
