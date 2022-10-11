@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.1 (2022-10-11)
+------------------
+
+Bug fixes:
+
+
+- Process the catalog queue before looking up in the catalog
+  [ale-rt] (#15)
+
+
 2.2.0 (2022-08-30)
 ------------------
 
