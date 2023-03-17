@@ -165,7 +165,6 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertIsNone(uuidToObject("unknown"))
 
     def test_uuidToCatalogBrain(self):
-        from Acquisition import aq_base
         from plone.app.uuid.utils import uuidToCatalogBrain
         from plone.uuid.interfaces import IUUID
 

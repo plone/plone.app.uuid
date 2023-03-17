@@ -1,4 +1,3 @@
-from AccessControl import Unauthorized
 from Products.CMFCore.indexing import processQueue
 from Products.CMFCore.utils import getToolByName
 from Products.ZCatalog.query import IndexQuery
