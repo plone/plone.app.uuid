@@ -20,7 +20,7 @@ class RedirectToUUIDView(BrowserView):
     def __call__(self):
         if self.uuid is None:
             raise KeyError(
-                'No UUID given in sub-path. Use .../@@redirect-to-uuid/<uuid>'
+                "No UUID given in sub-path. Use .../@@redirect-to-uuid/<uuid>"
             )
 
         url = uuidToURL(self.uuid)
@@ -28,4 +28,4 @@ class RedirectToUUIDView(BrowserView):
             raise NotFound(self, self.uuid)
 
         self.request.response.redirect(url)
-        return ''
+        return ""
