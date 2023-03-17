@@ -3,9 +3,9 @@ from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.testing.zope import Browser
 from plone.app.uuid.testing import PLONE_APP_UUID_FUNCTIONAL_TESTING
 from plone.app.uuid.testing import PLONE_APP_UUID_INTEGRATION_TESTING
+from plone.testing.zope import Browser
 
 import os
 import time
@@ -49,8 +49,8 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertEqual('/'.join(d1.getPhysicalPath()), results[0].getPath())
 
     def test_uuidToPhysicalPath(self):
-        from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToPhysicalPath
+        from plone.uuid.interfaces import IUUID
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -69,11 +69,11 @@ class IntegrationTestCase(unittest.TestCase):
         # I updated some of the utility functions to be a bit faster.
         # In this function you can check the speed.
         from Acquisition import aq_base
-        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToCatalogBrain
+        from plone.app.uuid.utils import uuidToObject
         from plone.app.uuid.utils import uuidToPhysicalPath
         from plone.app.uuid.utils import uuidToURL
-        from plone.app.uuid.utils import uuidToObject
-        from plone.app.uuid.utils import uuidToCatalogBrain
+        from plone.uuid.interfaces import IUUID
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -133,8 +133,8 @@ class IntegrationTestCase(unittest.TestCase):
             print(f"Time taken for uuidToCatalogBrain: {end - start}")
 
     def test_uuidToURL(self):
-        from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToURL
+        from plone.uuid.interfaces import IUUID
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -150,8 +150,8 @@ class IntegrationTestCase(unittest.TestCase):
 
     def test_uuidToObject(self):
         from Acquisition import aq_base
-        from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToObject
+        from plone.uuid.interfaces import IUUID
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -167,8 +167,8 @@ class IntegrationTestCase(unittest.TestCase):
 
     def test_uuidToCatalogBrain(self):
         from Acquisition import aq_base
-        from plone.uuid.interfaces import IUUID
         from plone.app.uuid.utils import uuidToCatalogBrain
+        from plone.uuid.interfaces import IUUID
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -196,11 +196,11 @@ class IntegrationTestCase(unittest.TestCase):
         'restricted/unrestricted=True/False'.
         """
         from Acquisition import aq_base
-        from plone.uuid.interfaces import IUUID
+        from plone.app.uuid.utils import uuidToCatalogBrain
+        from plone.app.uuid.utils import uuidToObject
         from plone.app.uuid.utils import uuidToPhysicalPath
         from plone.app.uuid.utils import uuidToURL
-        from plone.app.uuid.utils import uuidToObject
-        from plone.app.uuid.utils import uuidToCatalogBrain
+        from plone.uuid.interfaces import IUUID
 
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
