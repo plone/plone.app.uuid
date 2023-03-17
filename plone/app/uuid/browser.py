@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.uuid.utils import uuidToURL
 from zope.interface import implementer
 from zope.publisher.browser import BrowserView
@@ -29,4 +28,4 @@ class RedirectToUUIDView(BrowserView):
             raise NotFound(self, self.uuid)
 
         self.request.response.redirect(url)
-        return u''
+        return ''

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from plone.app.testing import logout
 from plone.app.testing import setRoles
@@ -88,12 +87,12 @@ class IntegrationTestCase(unittest.TestCase):
         if total:
             report = True
             total = int(total)
-            print("Creating {} documents...".format(total))
+            print(f"Creating {total} documents...")
         else:
             report = False
             total = 40
         for i in range(total):
-            doc_id = portal.invokeFactory('Document', 'd{}'.format(i))
+            doc_id = portal.invokeFactory('Document', f'd{i}')
             doc = portal[doc_id]
             uuids[IUUID(doc)] = {
                 'path': '/'.join(doc.getPhysicalPath()),
@@ -102,7 +101,7 @@ class IntegrationTestCase(unittest.TestCase):
             }
         end = time.time()
         if report:
-            print("Time taken to create {} items: {}".format(total, end - start))
+            print(f"Time taken to create {total} items: {end - start}")
 
         self.assertEqual(len(uuids), total)
         start = time.time()
@@ -110,28 +109,28 @@ class IntegrationTestCase(unittest.TestCase):
             self.assertEqual(info['path'], uuidToPhysicalPath(uuid))
         end = time.time()
         if report:
-            print("Time taken for uuidToPhysicalPath: {}".format(end - start))
+            print(f"Time taken for uuidToPhysicalPath: {end - start}")
 
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['url'], uuidToURL(uuid))
         end = time.time()
         if report:
-            print("Time taken for uuidToURL: {}".format(end - start))
+            print(f"Time taken for uuidToURL: {end - start}")
 
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['obj'], aq_base(uuidToObject(uuid)))
         end = time.time()
         if report:
-            print("Time taken for uuidToObject: {}".format(end - start))
+            print(f"Time taken for uuidToObject: {end - start}")
 
         start = time.time()
         for uuid, info in uuids.items():
             self.assertEqual(info['path'], uuidToCatalogBrain(uuid).getPath())
         end = time.time()
         if report:
-            print("Time taken for uuidToCatalogBrain: {}".format(end - start))
+            print(f"Time taken for uuidToCatalogBrain: {end - start}")
 
     def test_uuidToURL(self):
         from plone.uuid.interfaces import IUUID
@@ -286,10 +285,10 @@ class FunctionalTestCase(unittest.TestCase):
         browser = Browser(app)
         browser.addHeader(
             'Authorization',
-            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD, )
+            f'Basic {TEST_USER_ID}:{TEST_USER_PASSWORD}'
         )
 
-        browser.open('{0}/@@uuid'.format(d1.absolute_url()))
+        browser.open(f'{d1.absolute_url()}/@@uuid')
         self.assertEqual(uuid, browser.contents)
 
     def test_redirect_to_uuid_view(self):
@@ -311,7 +310,7 @@ class FunctionalTestCase(unittest.TestCase):
         browser = Browser(app)
         browser.addHeader(
             'Authorization',
-            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD,)
+            f'Basic {TEST_USER_ID}:{TEST_USER_PASSWORD}'
         )
 
         url = '{0}/@@redirect-to-uuid/{1}'
@@ -330,10 +329,10 @@ class FunctionalTestCase(unittest.TestCase):
         browser.handleErrors = False
         browser.addHeader(
             'Authorization',
-            'Basic {0}:{1}'.format(TEST_USER_ID, TEST_USER_PASSWORD, )
+            f'Basic {TEST_USER_ID}:{TEST_USER_PASSWORD}'
         )
 
-        url = '{0}/@@redirect-to-uuid/gibberish'.format(portal.absolute_url())
+        url = f'{portal.absolute_url()}/@@redirect-to-uuid/gibberish'
         from zExceptions import NotFound
         with self.assertRaises(NotFound):
             browser.open(url)

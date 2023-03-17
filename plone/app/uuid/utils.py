@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Products.CMFCore.indexing import processQueue
 from Products.CMFCore.utils import getToolByName
