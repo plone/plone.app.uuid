@@ -42,16 +42,19 @@ setup(
     zip_safe=False,
     python_requires=">=3.8",
     install_requires=[
-        "setuptools",
+        "Products.CMFCore",
+        "Products.ZCatalog",
         "plone.uuid",
         "plone.indexer",
+        "setuptools",
         "zope.publisher",
         "zope.interface",
     ],
     extras_require={
         "test": [
-            "plone.dexterity",
             "plone.app.testing",
+            "plone.dexterity",
+            "plone.testing",
         ]
     },
     entry_points="""
