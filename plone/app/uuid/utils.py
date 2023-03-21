@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from AccessControl import Unauthorized
 from Products.CMFCore.indexing import processQueue
 from Products.CMFCore.utils import getToolByName
 from Products.ZCatalog.query import IndexQuery
@@ -22,7 +20,7 @@ def _catalog():
             if request is not None:
                 request._catalog = None
             return
-        catalog = getToolByName(site, 'portal_catalog', None)
+        catalog = getToolByName(site, "portal_catalog", None)
         if request is not None:
             request._catalog = catalog
         return catalog
@@ -75,7 +73,7 @@ def uuidToURL(uuid):
     return brain.getURL()
 
 
-def uuidToObject(uuid, unrestricted = False):
+def uuidToObject(uuid, unrestricted=False):
     """Given a UUID, attempt to return a content object. Will return
     None if the UUID can't be found.
 
