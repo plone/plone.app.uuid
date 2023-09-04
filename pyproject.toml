@@ -1,6 +1,12 @@
 # Generated from:
 # https://github.com/plone/meta/tree/master/config/default
 # See the inline comments on how to expand/tweak this configuration file
+[build-system]
+# This would be a workaround:
+# requires = ["setuptools<68.1.0", "wheel"]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [tool.towncrier]
 directory = "news/"
 filename = "CHANGES.rst"
