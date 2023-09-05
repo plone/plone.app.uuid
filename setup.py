@@ -33,7 +33,8 @@ setup(
     author_email="optilude@gmail.com",
     url="http://plone.org",
     license="GPL",
-    packages=find_packages(),
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     namespace_packages=[
         "plone",
         "plone.app",
