@@ -47,8 +47,7 @@ setup(
         "plone.uuid",
         "plone.indexer",
         "setuptools",
-        "zope.publisher",
-        "zope.interface",
+        "Zope",
     ],
     extras_require={
         "test": [
