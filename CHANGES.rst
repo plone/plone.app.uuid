@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.4 (2025-09-11)
+------------------
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (6e36bcc4)
+- Move distribution to src layout [gforcada] (#4217)
+
+
 2.2.3 (2024-01-19)
 ------------------
 
