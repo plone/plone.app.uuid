@@ -38,7 +38,6 @@ setup(
         "Products.ZCatalog",
         "plone.uuid",
         "plone.indexer",
-        "setuptools",
         "Zope",
     ],
     extras_require={
